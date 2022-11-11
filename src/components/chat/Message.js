@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 
-export const Message = ({message}) => {
+export const Message = ({message, scroll}) => {
     const { auth } = useContext(AuthContext);
 
     if (!message.uid) {
@@ -21,7 +21,7 @@ export const Message = ({message}) => {
     };
 
     return (
-        <div className="chat__conversation-board__message-container" style={mystyle}>
+        <div className="chat__conversation-board__message-container" style={mystyle} ref={scroll}>
             <div className="chat__conversation-board__message__person">
                 <div className="chat__conversation-board__message__person__avatar">
                     <img
@@ -41,7 +41,6 @@ export const Message = ({message}) => {
                     </span>
                 </div>
             </div>
-
         </div>
     );
 }

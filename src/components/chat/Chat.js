@@ -1,5 +1,5 @@
 import { signOut } from "firebase/auth";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import { useNavigate } from 'react-router-dom';
 import { addDoc, collection, doc, onSnapshot, orderBy, query, QuerySnapshot, serverTimestamp } from "firebase/firestore";
@@ -10,6 +10,7 @@ export const Chat = () => {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const { auth, setLoggedUser } = useContext(AuthContext);
+    const scroll = useRef();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -41,6 +42,7 @@ export const Chat = () => {
         });
 
         setInput('');
+        scroll.current.scrollIntoView({behavior: 'smooth'});
     }
 
     const onLogout = () => {
@@ -59,7 +61,7 @@ export const Chat = () => {
             </div>
             <div className="--dark-theme" id="chat">
                 <div className="chat__conversation-board">
-                    {messages.map(message => <Message key={message.id} message={message} />)}
+                    {messages.map(message => <Message key={message.id} message={message} scroll={scroll}/>)}
                 </div>
                 <div className="chat__conversation-panel">
                     <div>
