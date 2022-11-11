@@ -6,7 +6,7 @@ import { auth } from './firebaseConfig';
 import { Chat } from './components/chat/Chat';
 import { LoginRegister } from './components/login-register/LoginRegister';
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {  Routes, Route, useNavigate } from 'react-router-dom';
 
 function App() {
   const [loggedUser, setLoggedUser] = useState(null);
@@ -28,7 +28,7 @@ function App() {
       .catch((err) => {
         alert(err.message);
       });
-    navigate('/');
+    navigate('/chat');
   }
 
   const register = (auth, email, password) => {
@@ -39,13 +39,16 @@ function App() {
       .catch((err) => {
         alert(err.message);
       });
-    navigate('/');
+    navigate('/chat');
   }
 
   return (
-    <AuthContext.Provider value={{ auth, register, login }}>
+    <AuthContext.Provider value={{ auth, register, login, setLoggedUser }}>
       <div className="App">
-        <LoginRegister />
+        <Routes>
+        <Route path='/' element={<LoginRegister />} />
+        <Route path='/chat' element={<Chat />} />
+        </Routes>
       </div>
     </AuthContext.Provider>
   );
