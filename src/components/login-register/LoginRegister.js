@@ -1,8 +1,12 @@
+import { updateProfile } from "firebase/auth";
 import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../contexts/AuthContext";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, setPersistence, browserSessionPersistence } from "firebase/auth";
 
 export const LoginRegister = () => {
-    const { auth, register, login } = useContext(AuthContext);
+    const { auth } = useContext(AuthContext);
+    const navigate = useNavigate();
 
     const onRegister = (e) => {
         e.preventDefault();
@@ -12,7 +16,14 @@ export const LoginRegister = () => {
         const email = formData.get('email');
         const password = formData.get('pswd');
 
-        register(auth, email, password);
+        setPersistence(auth, browserSessionPersistence)
+            .then(() => {
+                createUserWithEmailAndPassword(auth, email, password);
+            })
+            .catch((err) => {
+                alert(err.message);
+            });
+        navigate('/chat');
     }
 
     const onLogin = (e) => {
@@ -22,7 +33,14 @@ export const LoginRegister = () => {
         const email = formData.get('email');
         const password = formData.get('pswd');
 
-        login(auth, email, password);
+        setPersistence(auth, browserSessionPersistence)
+            .then(() => {
+                signInWithEmailAndPassword(auth, email, password);
+            })
+            .catch((err) => {
+                alert(err.message);
+            });
+        navigate('/chat');
     }
 
     return (

@@ -4,19 +4,19 @@ import { AuthContext } from "../../contexts/AuthContext";
 export const Message = ({message, scroll}) => {
     const { auth } = useContext(AuthContext);
 
-    if (!message.uid) {
-        message.uid = '';
+    let ownerMessage = null;
+
+    if (auth.currentUser) {
+        ownerMessage = message.uid === auth.currentUser.uid;
     }
 
-    const ownerMessage = message.uid === auth.currentUser.uid;
-
     let mystyle = {
-        "flexDirection" : "row-reverse"
+        "flexDirection" : "row"
     }
 
     if (ownerMessage) {
         mystyle = {
-            "flexDirection" : "row"
+            "flexDirection" : "row-reverse"
         }
     };
 

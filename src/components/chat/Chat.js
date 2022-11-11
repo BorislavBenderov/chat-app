@@ -1,4 +1,4 @@
-import { signOut } from "firebase/auth";
+import { signOut, onAuthStateChanged } from "firebase/auth";
 import { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import { useNavigate } from 'react-router-dom';
@@ -8,21 +8,27 @@ import { Message } from "./Message";
 
 export const Chat = () => {
     const [messages, setMessages] = useState([]);
+    const [loggedUser, setLoggedUser] = useState(null);
     const [input, setInput] = useState('');
-    const { auth, setLoggedUser } = useContext(AuthContext);
+    const { auth } = useContext(AuthContext);
     const scroll = useRef();
     const navigate = useNavigate();
 
     useEffect(() => {
         const q = query(collection(database, 'messages'), orderBy('timestamp'));
-        const unsubscribe = onSnapshot(q, (querySnapshot) => {
-            let messages = [];
-            querySnapshot.forEach((doc) => {
-                messages.push({ ...doc.data(), id: doc.id })
-            })
-            setMessages(messages);
+        onSnapshot(q, (querySnapshot) => {
+            setMessages(querySnapshot.docs.map(item => {
+                return { ...item.data(), id: item.id }
+            }));
         });
-        return () => unsubscribe();
+    }, []);
+
+    useEffect(() => {
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                setLoggedUser(user);
+            }
+        })
     }, []);
 
     const onCreate = async (e) => {
@@ -42,7 +48,7 @@ export const Chat = () => {
         });
 
         setInput('');
-        scroll.current.scrollIntoView({behavior: 'smooth'});
+        scroll.current.scrollIntoView({ behavior: 'smooth' });
     }
 
     const onLogout = () => {
@@ -61,7 +67,7 @@ export const Chat = () => {
             </div>
             <div className="--dark-theme" id="chat">
                 <div className="chat__conversation-board">
-                    {messages.map(message => <Message key={message.id} message={message} scroll={scroll}/>)}
+                    {messages.map(message => <Message key={message.id} message={message} scroll={scroll} />)}
                 </div>
                 <div className="chat__conversation-panel">
                     <div>
