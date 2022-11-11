@@ -10,13 +10,13 @@
 }
 
 body {
-  background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);
+  background: url('./chat.webp');
   background-size: cover;
 }
 
 #chat {
   background: var(--chat-background);
-  max-width: 600px;
+  width: 600px;
   margin: 15px auto;
   box-sizing: border-box;
   padding: 1em;
