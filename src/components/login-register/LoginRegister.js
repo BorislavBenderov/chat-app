@@ -1,6 +1,9 @@
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { useContext } from "react";
+import { AuthContext } from "../../contexts/AuthContext";
 
 export const LoginRegister = () => {
+    const { auth, register, login } = useContext(AuthContext);
+
     const onRegister = (e) => {
         e.preventDefault();
 
@@ -9,18 +12,17 @@ export const LoginRegister = () => {
         const email = formData.get('email');
         const password = formData.get('pswd');
 
-        const auth = getAuth();
-        createUserWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                // Signed in 
-                const user = userCredential.user;
-                // ...
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                // ..
-            });
+        register(auth, email, password);
+    }
+
+    const onLogin = (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        const email = formData.get('email');
+        const password = formData.get('pswd');
+
+        login(auth, email, password);
     }
 
     return (
@@ -38,7 +40,7 @@ export const LoginRegister = () => {
                 </form>
             </div>
             <div className="login">
-                <form>
+                <form onSubmit={onLogin}>
                     <label htmlFor="chk" aria-hidden="true">
                         Login
                     </label>
