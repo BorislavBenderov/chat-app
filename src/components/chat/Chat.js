@@ -1,4 +1,4 @@
-import { signOut, onAuthStateChanged, updateProfile } from "firebase/auth";
+import { signOut } from "firebase/auth";
 import { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import { useNavigate } from 'react-router-dom';
@@ -9,7 +9,7 @@ import { Message } from "./Message";
 export const Chat = () => {
     const [messages, setMessages] = useState([]);
     const [users, setUsers] = useState([]);
-    const [loggedUser, setLoggedUser] = useState(null);
+
     const [input, setInput] = useState('');
     const { auth } = useContext(AuthContext);
     const scroll = useRef();
@@ -29,13 +29,7 @@ export const Chat = () => {
         })
     }, []);
 
-    useEffect(() => {
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                setLoggedUser(user);
-            }
-        })
-    }, []);
+    
 
     const onCreate = async (e) => {
         e.preventDefault();
@@ -59,11 +53,10 @@ export const Chat = () => {
 
     const onLogout = () => {
         signOut(auth).then(() => {
-            setLoggedUser(null);
+            navigate('/');
         }).catch((err) => {
             alert(err.message);
-        });
-        navigate('/');
+        });     
     }
 
     return (

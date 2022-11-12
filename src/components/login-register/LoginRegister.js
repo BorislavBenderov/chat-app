@@ -1,14 +1,11 @@
 import { updateProfile } from "firebase/auth";
-import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../../contexts/AuthContext";
 import { setDoc, doc } from "firebase/firestore";
-import { database, storage } from "../../firebaseConfig";
+import { database, storage, auth } from "../../firebaseConfig";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, setPersistence, browserSessionPersistence } from "firebase/auth";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 export const LoginRegister = () => {
-    const { auth } = useContext(AuthContext);
     const navigate = useNavigate();
 
     const onRegister = (e) => {
@@ -19,6 +16,11 @@ export const LoginRegister = () => {
         const email = formData.get('email');
         const password = formData.get('pswd');
         const imageUrl = formData.get('imageUrl');
+
+        if (userName === '' || email === '' || password === "" || imageUrl === '') {
+            alert('Please fill all the fields');
+            return;
+        }
 
         setPersistence(auth, browserSessionPersistence)
             .then(async () => {
@@ -55,6 +57,11 @@ export const LoginRegister = () => {
         const formData = new FormData(e.target);
         const email = formData.get('email');
         const password = formData.get('pswd');
+
+        if (email === '' || password === '') {
+            alert('Please fill all the fields');
+            return;
+        }
 
         setPersistence(auth, browserSessionPersistence)
             .then(() => {

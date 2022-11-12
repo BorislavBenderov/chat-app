@@ -1,20 +1,23 @@
-import { AuthContext } from './contexts/AuthContext';
 import { database } from './firebaseConfig';
-import { auth } from './firebaseConfig';
+
 import { Chat } from './components/chat/Chat';
 import { LoginRegister } from './components/login-register/LoginRegister';
-import {  Routes, Route } from 'react-router-dom';
+import { AuthContext } from './contexts/AuthContext';
+import { Routes, Route, BrowserRouter } from 'react-router-dom';
+import { useContext } from 'react';
 
 function App() {
+  const { loggedUser } = useContext(AuthContext);
+
   return (
-    <AuthContext.Provider value={{ auth }}>
+    <BrowserRouter>
       <div className="App">
         <Routes>
-        <Route path='/' element={<LoginRegister />} />
-        <Route path='/chat' element={<Chat />} />
+          <Route path='/' element={<LoginRegister />} />
+          <Route path='/chat' element={loggedUser ? <Chat /> : <LoginRegister />} />
         </Routes>
       </div>
-    </AuthContext.Provider>
+    </BrowserRouter>
   );
 }
 
