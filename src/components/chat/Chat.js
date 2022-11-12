@@ -65,8 +65,7 @@ export const Chat = () => {
         });
         navigate('/');
     }
-console.log(messages);
-console.log(users);
+
     return (
         <>
             <div className="btn__container">

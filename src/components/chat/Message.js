@@ -27,7 +27,7 @@ export const Message = ({message, scroll, users}) => {
             <div className="chat__conversation-board__message__person">
                 <div className="chat__conversation-board__message__person__avatar">
                     <img
-                        src="https://randomuser.me/api/portraits/women/44.jpg"
+                        src={user ? user.imageUrl : ''}
                         alt=""
                     />
                 </div>

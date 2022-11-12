@@ -3,8 +3,9 @@ import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../contexts/AuthContext";
 import { setDoc, doc } from "firebase/firestore";
-import { database } from "../../firebaseConfig";
+import { database, storage } from "../../firebaseConfig";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, setPersistence, browserSessionPersistence } from "firebase/auth";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 export const LoginRegister = () => {
     const { auth } = useContext(AuthContext);
@@ -17,20 +18,31 @@ export const LoginRegister = () => {
         const userName = formData.get('txt');
         const email = formData.get('email');
         const password = formData.get('pswd');
+        const imageUrl = formData.get('imageUrl');
 
         setPersistence(auth, browserSessionPersistence)
-            .then(() => {
-               const res =  createUserWithEmailAndPassword(auth, email, password)
-               .then((res) => {
-                updateProfile(res.user, {
-                displayName: userName
+            .then(async () => {
+               const res = await createUserWithEmailAndPassword(auth, email, password);
+               const storageRef = ref(storage, userName);
+               const uploadTask = uploadBytesResumable(storageRef, imageUrl);
+               uploadTask.on(
+                (err) => {
+                    alert(err.message);
+                },
+                () => {
+                    getDownloadURL(uploadTask.snapshot.ref).then(async (downloadUrl) => {
+                            await updateProfile(res.user, {
+                            displayName: userName,
+                            photoURL: downloadUrl
+                           });
+                            await setDoc(doc(database, 'users', res.user.uid), {
+                            displayName : userName,
+                            imageUrl: downloadUrl,
+                            uid: res.user.uid
+                        })
+                    })
+                })              
                })
-               setDoc(doc(database, 'users', res.user.uid), {
-                displayName : userName,
-                uid: res.user.uid
-            })
-               })
-            })
             .catch((err) => {
                 alert(err.message);
             });
@@ -65,6 +77,7 @@ export const LoginRegister = () => {
                     <input type="text" name="txt" placeholder="User name" required="" />
                     <input type="email" name="email" placeholder="Email" required="" />
                     <input type="password" name="pswd" placeholder="Password" required="" />
+                    <input type="file" name="imageUrl"/>
                     <button>Sign up</button>
                 </form>
             </div>
