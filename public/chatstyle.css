@@ -117,12 +117,11 @@ body {
 }
 #chat .chat__conversation-board__message__person__nickname {
   font-size: 9px;
-  color: #484848;
+  color: white;
   -webkit-user-select: none;
      -moz-user-select: none;
       -ms-user-select: none;
           user-select: none;
-  display: none;
 }
 #chat .chat__conversation-board__message__context {
   max-width: 55%;

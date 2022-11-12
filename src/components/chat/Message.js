@@ -1,13 +1,15 @@
 import { useContext } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 
-export const Message = ({message, scroll}) => {
+export const Message = ({message, scroll, users}) => {
     const { auth } = useContext(AuthContext);
 
+    let user = null
     let ownerMessage = null;
 
     if (auth.currentUser) {
         ownerMessage = message.uid === auth.currentUser.uid;
+        user = users.find(user => user.uid === message.uid);
     }
 
     let mystyle = {
@@ -26,11 +28,11 @@ export const Message = ({message, scroll}) => {
                 <div className="chat__conversation-board__message__person__avatar">
                     <img
                         src="https://randomuser.me/api/portraits/women/44.jpg"
-                        alt="Monika Figi"
+                        alt=""
                     />
                 </div>
                 <span className="chat__conversation-board__message__person__nickname">
-                    Monika Figi
+                    {user ? user.displayName : ''}
                 </span>
             </div>
             <div className="chat__conversation-board__message__context">

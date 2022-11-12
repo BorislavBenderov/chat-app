@@ -6,7 +6,6 @@ import { LoginRegister } from './components/login-register/LoginRegister';
 import {  Routes, Route } from 'react-router-dom';
 
 function App() {
-
   return (
     <AuthContext.Provider value={{ auth }}>
       <div className="App">

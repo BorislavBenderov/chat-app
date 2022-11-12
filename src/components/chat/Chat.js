@@ -1,4 +1,4 @@
-import { signOut, onAuthStateChanged } from "firebase/auth";
+import { signOut, onAuthStateChanged, updateProfile } from "firebase/auth";
 import { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import { useNavigate } from 'react-router-dom';
@@ -8,6 +8,7 @@ import { Message } from "./Message";
 
 export const Chat = () => {
     const [messages, setMessages] = useState([]);
+    const [users, setUsers] = useState([]);
     const [loggedUser, setLoggedUser] = useState(null);
     const [input, setInput] = useState('');
     const { auth } = useContext(AuthContext);
@@ -21,6 +22,11 @@ export const Chat = () => {
                 return { ...item.data(), id: item.id }
             }));
         });
+        onSnapshot(collection(database, 'users'), (data) => {
+            setUsers(data.docs.map(item => {
+                return { ...item.data() }
+            }))
+        })
     }, []);
 
     useEffect(() => {
@@ -59,7 +65,8 @@ export const Chat = () => {
         });
         navigate('/');
     }
-
+console.log(messages);
+console.log(users);
     return (
         <>
             <div className="btn__container">
@@ -67,7 +74,7 @@ export const Chat = () => {
             </div>
             <div className="--dark-theme" id="chat">
                 <div className="chat__conversation-board">
-                    {messages.map(message => <Message key={message.id} message={message} scroll={scroll} />)}
+                    {messages.map(message => <Message key={message.id} message={message} scroll={scroll} users={users} />)}
                 </div>
                 <div className="chat__conversation-panel">
                     <div>

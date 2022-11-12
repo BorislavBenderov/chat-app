@@ -2,6 +2,8 @@ import { updateProfile } from "firebase/auth";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../contexts/AuthContext";
+import { setDoc, doc } from "firebase/firestore";
+import { database } from "../../firebaseConfig";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, setPersistence, browserSessionPersistence } from "firebase/auth";
 
 export const LoginRegister = () => {
@@ -18,7 +20,16 @@ export const LoginRegister = () => {
 
         setPersistence(auth, browserSessionPersistence)
             .then(() => {
-                createUserWithEmailAndPassword(auth, email, password);
+               const res =  createUserWithEmailAndPassword(auth, email, password)
+               .then((res) => {
+                updateProfile(res.user, {
+                displayName: userName
+               })
+               setDoc(doc(database, 'users', res.user.uid), {
+                displayName : userName,
+                uid: res.user.uid
+            })
+               })
             })
             .catch((err) => {
                 alert(err.message);
